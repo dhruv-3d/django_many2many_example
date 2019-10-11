@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+
+<head>
+  <title> Django Autosearch POC </title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+
+</head>
+
+<body>
+
+  <!DOCTYPE html>
+
+  <br><br>
+  <form action="{% url 'index' %}" method="POST">
+    {% csrf_token %}
+    <!-- {{ post_form }} -->
+    <label>Title</label>
+    {{ post_form.title }}
+    <br>
+    <label>Description</label>
+    {{ post_form.description }}
+    <br>
+    <label>Add Tags</label>
+    <input name="tags" type="text" class="form-control" id="search" placeholder="Enter search" />
+    <button type="submit">Submit</button>
+    {{form_errors}}
+  </form>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+  <script>
+    $(function () {
+      //var sourceDataObj = jQuery.parseJSON( "https://jsonplaceholder.typicode.com/comments" );
+
+      //THIS SMALL SAMPLE WORKS
+      var sourceDataObj = [];
+
+      {% for tag in available_tags %}
+        sourceDataObj.push({ id: '{{ tag.id }}', value: '{{ tag.name }}' });
+      {% endfor %}
+
+      $("#search").tokenfield({
+        autocomplete: {
+          source: sourceDataObj,
+          delay: 100
+        },
+        showAutocompleteOnFocus: true
+      });
+
+      $("#search")
+        .on("tokenfield:createtoken", function (event) {
+          var existingTokens = $(this).tokenfield("getTokens");
+          var exists = true;
+          //PREVENT DUPLICATION
+          $.each(existingTokens, function (index, token) {
+            if (token.value === event.attrs.value) event.preventDefault();
+          });
+          //ALLOW ONLY TOKENS FROM SOURCE
+          $.each(sourceDataObj, function (index, token) {
+            if (token.value !== event.attrs.value) exists = false;
+          });
+          if (exists === true) event.preventDefault();
+        })
+
+        .on("tokenfield:removedtoken", function (event) {
+          alert("Token " + event.attrs.value + " removed!");
+        });
+    });
+
+  </script>
+</body>
+
+</html>
