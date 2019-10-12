@@ -7,27 +7,21 @@ from .forms import PostForm
 def index(request):
     context_dict = {}
     all_tags = Tag.objects.all().values('name')
-    # all_tags_value = Tag.objects.values_list('name', flat=True)
     post_form = PostForm()
 
     if request.method == 'POST':
         post_form = PostForm(request.POST)
+
         if post_form.is_valid():
             post = post_form.save(commit=False)
             post.user_id = request.user.id
             post.save()
-            # new_post_instance = Post.objects.get(id=post.id)
 
-            print("post.tags", request.POST)
-            if request.POST.get('tags'):
-                tags_for_post = request.POST.get('tags')
-                for tag in tags_for_post:
-                    print("all_tags_value", list(all_tags))
-                    if tag not in all_tags:
-                        new_tag = Tag.objects.create(name=tag)
-                        post.tags.add(new_tag)
-                    post.tags.add(tag)
-                post.save()
+            tags_in_post = request.POST.get('tags').split(',')
+            if tags_in_post:
+                for tag in tags_in_post:
+                    tag_instance, created = Tag.objects.get_or_create(name=tag.strip())
+                    post.tags.add(tag_instance)
 
             context_dict['success'] = True
             return render(request, 'index.html', context_dict)

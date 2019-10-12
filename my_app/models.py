@@ -13,7 +13,7 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     description = models.TextField()
-    tags = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.title
