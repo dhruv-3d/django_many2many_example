@@ -1,0 +1,31 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/event_calender.css' %}" />
+</head>
+
+<body>
+    <header>
+        Schedule your session
+    </header>
+    <section class="container">
+        <div class="headerBar">
+            <div class="left btn" onclick="prev()">
+                &#10094;
+            </div>
+            <div class="currentWeek"></div>
+            <div class="right btn" onclick="next()">
+                &#10095;
+            </div>
+        </div>
+        <div class="calenderContainer">
+
+        </div>
+    </section>
+</body>
+
+</html>

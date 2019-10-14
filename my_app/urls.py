@@ -5,4 +5,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('datepicker_poc', views.datepicker_poc, name='datepicker_poc'),
 ]
