@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 
-from .models import Post, Tag, User
+from .models import Post, Tag, User, Session, SessionSlot
 from .forms import PostForm, SessionSlotForm
 
 
@@ -55,3 +55,30 @@ def datepicker_poc(request):
 
     context_dict['slot_form'] = slot_form
     return render(request, 'datepicker_poc.html', context_dict)
+
+
+def calender_poc(request, session_id):
+    context_dict = {}
+    # sess_instance = Session.objects.get(id=session_id)
+    # if sess_instance:
+    sess_slots = SessionSlot.objects.filter(session_id=session_id)
+
+
+    context_dict['session_slots'] = sess_slots
+    return render(request, 'calender_poc_new.html', context_dict)
+
+
+def event_schedule(request):
+    context_dict = {}
+    all_session = Session.objects.all()
+    sess_slots = SessionSlot.objects.all()
+
+    if request.method == 'POST':
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        sesion_id = request.POST.get('sesion_id')
+        print(f"{start_time}\n{end_time}\n{sesion_id}")
+
+    context_dict['session_slots'] = sess_slots
+    context_dict['session_list'] = all_session
+    return render(request, 'slot_schedule.html', context_dict)

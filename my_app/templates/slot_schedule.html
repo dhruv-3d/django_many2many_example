@@ -1,0 +1,158 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/core/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.css" />
+</head>
+
+<body>
+
+    <div id='external-events'>
+        <p>
+            <strong>Your Events</strong>
+        </p>
+        {% for session in session_list %}
+            <div class='fc-event'>{{ session.title }}</div>
+        {% endfor %}
+    </div>
+
+    <div id='calendar-container'>
+        <div id='calendar'></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendarInteraction.Draggable;
+
+            var containerEl = document.getElementById('external-events');
+            var calendarEl = document.getElementById('calendar');
+            var checkbox = document.getElementById('drop-remove');
+
+            // initialize the external events
+            // -----------------------------------------------------------------
+            new Draggable(containerEl, {
+                itemSelector: '.fc-event',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        duration: '04:00:00'
+                    };
+                }
+            });
+
+            // initialize the calendar
+            // -----------------------------------------------------------------
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                defaultView: 'timeGridWeek',
+                editable: true,
+                droppable: true, // this allows things to be dropped onto the calendar
+                events: setSlotList(),
+                eventColor: '#ed9454',
+                eventAllow: function (dropLocation, draggedEvent) {
+                    // Can an event be created from the "eventData" 
+                    // and passed into this callback from external? 
+                    // When dragging and event, its physical 
+                    // representation of duration is displayed 
+                    // so should have access before officially "dropped"
+
+                    // Note:  works fine for internally dragged items
+
+                    // see browser console for "invalid" draggedEvent
+                    // properties access to title yeilds:
+                    // " [Exception: TypeError: Cannot read property 'title' of undefined at e.get [as title] (https://fullcalendar.io/releases/core/4.0.1/main.min.js:7:22476) at e.invokeGetter (<anonymous>:2:14)]"
+
+                    console.log("dropLocation", dropLocation, draggedEvent);
+                    return true;
+                },
+                eventReceive: function(info) {
+                    // API call to create new slot
+                    console.log("event to be created", info.event);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'event_schedule' %}",
+                        data: {
+                            'created': true, 
+                            'start_time': info.event.start,
+                            'end_time': info.event.end,
+                            'sesion_id': info.event.sessionId,
+                            'slot_id': info.event.id,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function (data, textStatus) {
+                            alert("New slot added for " + info.event.title + " on " + info.event.start);
+                        },
+                        error: function (xhr, status, e) {
+                            alert(status, e);
+                        }
+                    });
+                },
+                eventDrop: function (info) {
+                    console.log("event to be update", info.event);
+                    alert(info.event.title + " was dropped on " + info.event.start);
+                    if (confirm("Are you sure about this change?")) {
+                        // API call to update existing slots
+                        $.ajax({
+                            type: 'POST',
+                            url: "{% url 'event_schedule' %}",
+                            data: {
+                                'created': false, 
+                                'start_time': info.event.start,
+                                'end_time': info.event.end,
+                                'sesion_id': info.event.extendedProps.sessionId,
+                                'slot_id': info.event.id,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            success: function (data, textStatus) {
+                                alert("Event slot updated successfully!!");
+                            },
+                            error: function (xhr, status, e) {
+                                alert(status, e);
+                            }
+                        });
+                    } else {
+                        info.revert();
+                    }
+                }
+            });
+            calendar.render();
+
+            function setSlotList() {
+                events = []
+                {% for slot in session_slots %}
+                    events.push(
+                        {
+                            id: {{ slot.id }},
+                            title: "{{ slot.session.title }}",
+                            start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                            end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                            sessionId: {{ slot.session_id }}
+                        }
+                    );
+                {% endfor %}
+                console.log("Session Slots: ", events);
+                return events
+            }
+    });
+    </script>
+</body>
+
+</html>
