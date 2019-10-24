@@ -12,6 +12,8 @@ Best one: https://codepen.io/hoakie/pen/rRomYZ
 FullCalender Docs:
 https://fullcalendar.io/docs/view-specific-options
 https://fullcalendar.io/docs/eventReceive
+http://jsfiddle.net/5o66w860/65/
 
 DateTime Widget:
 https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
+
