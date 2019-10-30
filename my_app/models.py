@@ -9,8 +9,16 @@ class Tag(models.Model):
         return self.name
 
 
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
+
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subjects = models.ManyToManyField(Subject)
     title = models.CharField(max_length=150)
     description = models.TextField()
     tags = models.ManyToManyField(Tag)
@@ -18,6 +26,14 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+
+class UserRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+
+    def __str__(self):
+        return self.user.name + ' - ' + self.rating
+    
 
 class Session(models.Model):
     title = models.CharField(max_length=200)

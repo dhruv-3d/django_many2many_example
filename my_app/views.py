@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 
 from .models import Post, Tag, User, Session, SessionSlot
 from .forms import PostForm, SessionSlotForm
+from datetime import datetime
 
 
 def index(request):
@@ -74,11 +75,51 @@ def event_schedule(request):
     sess_slots = SessionSlot.objects.all()
 
     if request.method == 'POST':
+        # if request.POST.get('created'):
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
         sesion_id = request.POST.get('sesion_id')
+        slot_id = request.POST.get('slot_id')
         print(f"{start_time}\n{end_time}\n{sesion_id}")
 
     context_dict['session_slots'] = sess_slots
     context_dict['session_list'] = all_session
     return render(request, 'slot_schedule.html', context_dict)
+
+
+def profile_detailed_view(request):
+    context_dict = {}
+
+    session_slots = [
+        {
+            'id': 1,
+            'title': 'Session 1',
+            'start_time': datetime.strptime('2019-10-31 1:00:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-10-31 2:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+        {
+            'id': 2,
+            'title': 'Session 2',
+            'start_time': datetime.strptime('2019-10-30 5:30:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-10-30 6:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+                {
+            'id': 3,
+            'title': 'Session 3',
+            'start_time': datetime.strptime('2019-11-7 10:00:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-11-7 12:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+                {
+            'id': 4,
+            'title': 'Session 4',
+            'start_time': datetime.strptime('2019-10-25 11:00:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-10-25 12:00:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+    ]
+
+    context_dict['session_slots'] = session_slots
+    return render(request, 'profile.html', context_dict)

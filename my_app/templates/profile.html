@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+
+<head>
+    <title>profile</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <center class="m-t-30">
+                            <img src="{% static 'user.png' %}" class="img-circle" width="150">
+                            <h4 class="card-title m-t-10">Alla hu Akbar</h4>
+                            <h6 class="card-subtitle">Terrorist Squad Manager - West</h6>
+                            <div class="row text-center justify-content-md-center">
+                                <div class="col-5">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-empty"></i>
+                                </div>
+                                <div class="col-3">
+                                    <i class="fa fa-dollar"></i>
+                                    <font class="font-medium">16.44</font>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
+                    <div>
+                        <hr>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">Email address </small>
+                        <h6>test_demo@gmail.com</h6>
+                        <small class="text-muted p-t-30 db">Phone</small>
+                        <h6>+1 2654 784 547</h6>
+                        <small class="text-muted p-t-30 db">Subjects</small>
+                        <h6>Distributed Computing, Parallel Processing, Advanced Networking</h6>
+                        <small class="text-muted p-t-30 db">Tags</small><br />
+                        <button class="btn-secondary m-1">#dc</button>
+                        <button class="btn-secondary m-1">#offerOfTheDay</button>
+                        <button class="btn-secondary m-1">#Networking</button>
+                        <button class="btn-secondary m-1">#prallelProcessing</button>
+                        <button class="btn-secondary m-1">#DistributedComputing</button>
+                        <button class="btn-secondary m-1">#NetworkArchitecture</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs profile-tab" role="tablist">
+                        <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab"
+                                aria-selected="true">Available Sessions</a> </li>
+                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab"
+                                aria-selected="false">Selected Sessions</a> </li>
+                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab"
+                                aria-selected="false">Settings</a> </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="home" role="tabpanel">
+                            <div class="card-body">
+                                {% include 'tutor_sessions.html' %}
+                            </div>
+                        </div>
+                        <!--second tab-->
+                        <div class="tab-pane" id="profile" role="tabpanel">
+                            <div class="card-body">
+                                Ahiya kadach kaini aavse
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="settings" role="tabpanel">
+                            <div class="card-body">
+                                Ahiya to kai aavse j nai
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
