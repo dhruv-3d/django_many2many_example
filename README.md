@@ -26,3 +26,8 @@ http://jsfiddle.net/5o66w860/65/
 DateTime Widget:
 https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
 
+
+
+http://themedesigner.in/demo/admin-press/main/pages-profile.html
+
+https://codepen.io/ericwinton/pen/jqKyyq
