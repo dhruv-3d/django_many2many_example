@@ -1,8 +1,12 @@
-from django.shortcuts import render, HttpResponse
+from datetime import datetime
 
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, HttpResponse, reverse
+
+from paypal.standard.forms import PayPalPaymentsForm
 from .models import Post, Tag, User, Session, SessionSlot
 from .forms import PostForm, SessionSlotForm
-from datetime import datetime
 
 
 def index(request):
@@ -123,3 +127,35 @@ def profile_detailed_view(request):
 
     context_dict['session_slots'] = session_slots
     return render(request, 'profile.html', context_dict)
+
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'payment_done.html')
+ 
+ 
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'payment_cancelled.html')
+
+
+def process_payment(request):
+    host = request.get_host()
+ 
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        'amount': 10.00,
+        'item_name': 'Order 175931',
+        'invoice': '175931',
+        'currency_code': 'USD',
+        'notify_url': 'http://{}{}'.format(host,
+                                           reverse('paypal-ipn')),
+        'return_url': 'http://{}{}'.format(host,
+                                           reverse('payment_done')),
+        'cancel_return': 'http://{}{}'.format(host,
+                                              reverse('payment_cancelled')),
+    }
+ 
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    return render(request, 'process_payment.html', {'form': form})
+

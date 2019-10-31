@@ -42,8 +42,36 @@
                 events: setSlotList(),
                 eventColor: '#4390eb',
                 eventClick: function(eventClickInfo) {
-                    alert('Event: ' + eventClickInfo.event.title);
-                    console.log(eventClickInfo);
+                    if(confirm("Are you sure you want to select this session?")) {
+                        selected_slot = {
+                            slotId: eventClickInfo.event.id,
+                            offer_id: eventClickInfo.event.extendedProps.sessionId,
+                            title: eventClickInfo.event.title,
+                            start: eventClickInfo.event.start.toLocaleTimeString(),
+                            end: eventClickInfo.event.end.toLocaleTimeString(),
+                            date: eventClickInfo.event.start.toDateString()
+                        }
+                        window.localStorage.setItem('selected_slot', JSON.stringify(selected_slot));
+                        
+                        $('.selected-slot-detail').html( 
+                            `<div class="slot-wrapper"> \
+                                <button id="slot-remove" type="button" class="close" data-toggle="tooltip" data-placement="bottom" title="Remove selection">\
+                                    <span aria-hidden="true">&times;</span>\
+                                </button>\
+                                <p>${selected_slot.title}</p> \
+                                <p>Time: ${selected_slot.start} to ${selected_slot.end}</p> \
+                                <p>Date: ${selected_slot.date}</p> \
+                                <div class="text-center mt-2 mb-2"> \
+                                    <a href="{% url 'process_payment' %}" class="btn btn-light">Proceed to booking</a> \
+                                </div> \
+                            </div>`
+                        )
+
+                        $('#slot-remove').on('click', function() {
+                            window.localStorage.clear();
+                            $('.selected-slot-detail').html("Your selected tution slots will be visible here.")
+                        })
+                    }
                 },
             });
             calendar.render();
@@ -55,7 +83,7 @@
                         id: {{ slot.id }},
                         title: "{{ slot.title }}",
                         start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
-                        end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                        end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.end_time|time:'H:i' }}",
                         sessionId: {{ slot.session_id }}
                     });
                 {% endfor %}

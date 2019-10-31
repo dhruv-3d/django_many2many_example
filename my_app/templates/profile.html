@@ -12,9 +12,9 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="">
         <div class="row mt-5">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-body">
                         <center class="m-t-30">
@@ -56,16 +56,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div class="card">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs profile-tab" role="tablist">
                         <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab"
-                                aria-selected="true">Available Sessions</a> </li>
-                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab"
-                                aria-selected="false">Selected Sessions</a> </li>
-                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab"
-                                aria-selected="false">Settings</a> </li>
+                                aria-selected="true">Available Sessions</a>
+                        </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
@@ -74,16 +71,17 @@
                                 {% include 'tutor_sessions.html' %}
                             </div>
                         </div>
-                        <!--second tab-->
-                        <div class="tab-pane" id="profile" role="tabpanel">
-                            <div class="card-body">
-                                Ahiya kadach kaini aavse
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div>
+                            <b>Selected Session Slot</b>
+                            <hr>
                         </div>
-                        <div class="tab-pane" id="settings" role="tabpanel">
-                            <div class="card-body">
-                                Ahiya to kai aavse j nai
-                            </div>
+                        <div class="selected-slot-detail">
                         </div>
                     </div>
                 </div>
@@ -99,6 +97,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.localStorage.clear();            
+            $('.selected-slot-detail').html("You have not selected any session slots for this tutor. Select available tution slots you want to book this tutor for.")
+        });
+    </script>
 </body>
 
 </html>

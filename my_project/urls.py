@@ -20,8 +20,9 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('', include('my_app.urls')),
     path('admin/', admin.site.urls),
+    path('', include('my_app.urls')),
+    path('paypal/', include('paypal.standard.ipn.urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'my_app',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = []
 
 MEDIA_URL = '/media/'
+
+
+# "demo.narolainfotech@gmail.com"
+# "DEMO@narola30"
+# facilitator = 'demo.narolainfotech-buyer@gmail.com'
+# buyer = 'demo.narolainfotech-facilitator@gmail.com'
+
+PAYPAL_RECEIVER_EMAIL = 'demo.narolainfotech-buyer@gmail.com'
+
+PAYPAL_TEST = True

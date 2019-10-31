@@ -31,3 +31,9 @@ https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker
 http://themedesigner.in/demo/admin-press/main/pages-profile.html
 
 https://codepen.io/ericwinton/pen/jqKyyq
+
+
+PayPal with Django:
+https://overiq.com/django-paypal-integration-with-django-paypal/
+
+https://django-paypal.readthedocs.io/en/stable/overview.html
