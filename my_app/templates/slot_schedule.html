@@ -13,15 +13,6 @@
 
 <body>
 
-    <!-- <div id='external-events'>
-        <p>
-            <strong>Your Events</strong>
-        </p>
-        {% for session in session_list %}
-            <div class='fc-event'>{{ session.title }}</div>
-        {% endfor %}
-    </div> -->
-
     <div id='calendar-container'>
         <div id='calendar'></div>
     </div>
@@ -45,9 +36,17 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
+                minTime: "7:00:00",
+                maxTime: "24:00:00",
                 defaultView:  'timeGridWeek',
+                views: {
+                    month: {
+                        editable: false
+                    }
+                },
                 editable:  true,
                 selectable: true,
+                eventOverlap: false,
                 events: setSlotList(),
                 eventColor: '#4390eb',
                 eventAllow: function (dropLocation, draggedEvent ) {
@@ -59,60 +58,40 @@
                     alert(["Session slot date: " + eventObject.start.toLocaleDateString(),
                             "Session starts at: " + eventObject.start.toLocaleTimeString(),
                             "Session end at: " + eventObject.end.toLocaleTimeString()].join("\n"));
-/*                     calendar.addEvent({
+                    // console.log("Day is: ", eventObject.start.getDay())
+                    calendar.addEvent({
                         id: 1,
                         title: 'affefvc',
-                        start: 'afcaf',
-                        end: 'adad',
-                        sessionId: 1
-                    }); */
-                },
-/*                 eventReceive: function(info) {
-                    // API call to create new slot
-                    console.log("event to be created", info.event);
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'event_schedule' %}",
-                        data: {
-                            'created': true, 
-                            'start_time': info.event.start,
-                            'end_time': info.event.end,
-                            'sesion_id': info.event.sessionId,
-                            'slot_id': info.event.id,
-                            'csrfmiddlewaretoken': '{{ csrf_token }}'
-                        },
-                        success: function (data, textStatus) {
-                            alert("New slot added for " + info.event.title + " on " + info.event.start);
-                        },
-                        error: function (xhr, status, e) {
-                            alert(status, e);
-                        }
+                        start: eventObject.start,
+                        end: eventObject.end,
+                        daysOfWeek: [eventObject.start.getDay()],
+                        // startRecur: eventObject.start,
+                        allDay: false,
                     });
-                }, */
-
+                },
                 eventDrop: function (info) {
                     console.log("event to be update", info.event);
                     alert(info.event.title + " was dropped on " + info.event.start);
                     if (confirm("Are you sure about this change?")) {
                         // API call to update existing slots
-                        $.ajax({
-                            type: 'POST',
-                            url: "{% url 'event_schedule' %}",
-                            data: {
-                                'created': false, 
-                                'start_time': info.event.start,
-                                'end_time': info.event.end,
-                                'sesion_id': info.event.extendedProps.sessionId,
-                                'slot_id': info.event.id,
-                                'csrfmiddlewaretoken': '{{ csrf_token }}'
-                            },
-                            success: function (data, textStatus) {
-                                alert("Event slot updated successfully!!");
-                            },
-                            error: function (xhr, status, e) {
-                                alert(status, e);
-                            }
-                        });
+                        // $.ajax({
+                        //     type: 'POST',
+                        //     url: "{% url 'event_schedule' %}",
+                        //     data: {
+                        //         'created': false, 
+                        //         'start_time': info.event.start,
+                        //         'end_time': info.event.end,
+                        //         'sesion_id': info.event.extendedProps.sessionId,
+                        //         'slot_id': info.event.id,
+                        //         'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        //     },
+                        //     success: function (data, textStatus) {
+                        //         alert("Event slot updated successfully!!");
+                        //     },
+                        //     error: function (xhr, status, e) {
+                        //         alert(status, e);
+                        //     }
+                        // });
                     } else {
                         info.revert();
                     }
@@ -129,7 +108,10 @@
                         title: "{{ slot.session.title }}",
                         start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
                         end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
-                        sessionId: {{ slot.session_id }}
+                        sessionId: {{ slot.session_id }},
+                        daysOfWeek: [2,],
+                        startRecur: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                        allDay: false,
                     });
                 {% endfor %}
                 console.log("Session Slots: ", events);
