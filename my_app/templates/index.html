@@ -10,7 +10,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css">
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
-  <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 </head>
 
@@ -19,20 +19,31 @@
   <!DOCTYPE html>
 
   <br><br>
-  <form action="{% url 'index' %}" method="POST">
-    {% csrf_token %}
-    <!-- {{ post_form }} -->
-    <label>Title</label>
-    {{ post_form.title }}
-    <br>
-    <label>Description</label>
-    {{ post_form.description }}
-    <br>
-    <label>Add Tags</label>
-    <input name="tags" type="text" class="form-control" id="search" placeholder="Enter search" />
-    <button type="submit">Submit</button>
-    {{form_errors}}
-  </form>
+  <div class="container">
+    <form action="{% url 'index' %}" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="csrfmiddlewaretoken" value="pHdneBED2llsnGfpvsXqmU4VIM4UwjfGftjOtvpk4i3HdhMxebxpGdbmf4dWwlQQ">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control " name="title" maxlength="150" required="" id="id_title">
+      </div>
+      <!-- <br> -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" class="form-control " cols="40" rows="10" required="" id="id_description"></textarea>
+      </div>
+      <!-- <br> -->
+      <div class="form-group">
+        <label>Image Input field</label>
+        <input type="file" class="form-control " name="picture" required="required">
+      </div>
+      <!-- <br> -->
+      <label>Add Tags</label>
+      <div class="tag-wrapper">
+        <input name="tags" class="" type="text" id="search" placeholder="Enter search" required="required" tabindex="-1" style="position: absolute; left: -10000px;">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -80,6 +91,18 @@
         });
     });
 
+  </script>
+  <script>
+    $('.btn').on('click', function(){
+      var tagValue = $('#search').val()
+      if(tagValue == '') {
+        $('.tag-wrapper').addClass('form-error')
+      }
+    })
+
+    $('#search').on('change', function() {
+      $('.tag-wrapper').removeClass('form-error')
+    })
   </script>
 </body>
 

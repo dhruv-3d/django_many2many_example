@@ -1,3 +1,8 @@
 .form-horizontal {
   margin-top: 10px;
 }
+
+.form-error {
+  border: 1px solid #dc3545 !important;
+  border-radius: 4px;
+}

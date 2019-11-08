@@ -20,7 +20,7 @@ def index(request):
         if post_form.is_valid():
             post = post_form.save(commit=False)
             post.user_id = request.user.id
-            post.picture = post_form.cleaned_data['picture']
+            # post.picture = post_form.cleaned_data['picture']
             post.save()
 
             tags_in_post = request.POST.get('tags').split(',')

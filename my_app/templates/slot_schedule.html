@@ -44,6 +44,7 @@
                         editable: false
                     }
                 },
+                // allDaySlot: false,
                 editable:  true,
                 selectable: true,
                 eventOverlap: false,
@@ -59,13 +60,15 @@
                             "Session starts at: " + eventObject.start.toLocaleTimeString(),
                             "Session end at: " + eventObject.end.toLocaleTimeString()].join("\n"));
                     // console.log("Day is: ", eventObject.start.getDay())
+                    var did = Math.floor((Math.random() * 100) + 1)
                     calendar.addEvent({
-                        id: 1,
-                        title: 'affefvc',
-                        start: eventObject.start,
-                        end: eventObject.end,
+                        id: did,
+                        title: 'Event ' + did.toString(),
+                        startTime: eventObject.start.toTimeString(),
+                        endTime: eventObject.end.toTimeString(),
                         daysOfWeek: [eventObject.start.getDay()],
-                        // startRecur: eventObject.start,
+                        startRecur: eventObject.start,
+                        endRecur: eventObject.end,
                         allDay: false,
                     });
                 },
@@ -97,6 +100,19 @@
                     }
                 },
 
+                eventRender: function(eventObj) { 
+                    var event_element = $(eventObj.el);
+                    event_element.find(".fc-bg").css("pointer-events","none");
+                    event_element.append("<div style='position:absolute;bottom:0px;right:0px' ><button type='button' id='btnDeleteEvent' class='btn btn-block btn-primary btn-flat'>X</button></div>" );
+                    event_element.find("#btnDeleteEvent").click(function() {
+                        if (confirm("Are you sure about this change?")) {
+                            eventObj.event.remove()
+                        }
+                        else {
+                            console.log("adasd");
+                        }
+                    });
+                }
             });
             calendar.render();
 
@@ -109,9 +125,9 @@
                         start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
                         end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
                         sessionId: {{ slot.session_id }},
-                        daysOfWeek: [2,],
-                        startRecur: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
-                        allDay: false,
+                        // daysOfWeek: [2],
+                        // startRecur: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                        // allDay: false,
                     });
                 {% endfor %}
                 console.log("Session Slots: ", events);
