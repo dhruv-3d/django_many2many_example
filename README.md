@@ -37,3 +37,7 @@ PayPal with Django:
 https://overiq.com/django-paypal-integration-with-django-paypal/
 
 https://django-paypal.readthedocs.io/en/stable/overview.html
+
+
+Bootstrap Collapsible Table Rows:
+https://www.jqueryscript.net/table/jQuery-Plugin-For-Expandable-Bootstrap-Table-Rows.html
