@@ -53,6 +53,18 @@
                         <button class="btn-secondary m-1">#prallelProcessing</button>
                         <button class="btn-secondary m-1">#DistributedComputing</button>
                         <button class="btn-secondary m-1">#NetworkArchitecture</button>
+
+                        <div>
+                          {% for info_obj in user_data.values %}
+                            <div class="container">
+                                POST: {{ info_obj.0.title }}
+                                <br>
+                                RATING: {{ info_obj.1.rating }}
+                                <br>
+                                ---------------
+                            </div>
+                          {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

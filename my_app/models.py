@@ -32,7 +32,7 @@ class UserRating(models.Model):
     rating = models.IntegerField()
 
     def __str__(self):
-        return self.user.name + ' - ' + self.rating
+        return self.user.first_name + ' - ' + str(self.rating)
     
 
 class Session(models.Model):

@@ -112,6 +112,14 @@
                             console.log("adasd");
                         }
                     });
+                },
+
+                eventClick: function(calEvent, jsEvent, view) {
+                    alert('Event: ' + calEvent.event.title);
+                    alert('Coordinates: ' + calEvent.jsEvent.pageX + ',' + calEvent.jsEvent.pageY);
+                    alert('View: ' + calEvent.view.title);
+                    // change the border color just for fun
+                    $(this).css('border-color', 'red');
                 }
             });
             calendar.render();

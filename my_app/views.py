@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, HttpResponse, reverse
 
 from paypal.standard.forms import PayPalPaymentsForm
-from .models import Post, Tag, User, Session, SessionSlot
+from .models import Post, Tag, User, Session, SessionSlot, UserRating
 from .forms import PostForm, SessionSlotForm
 
 
@@ -125,6 +125,14 @@ def profile_detailed_view(request):
         },
     ]
 
+    related_things = Post.objects.filter(subjects__name__icontains="maths")
+    # print("related_things: ", related_things.user.first_name)
+
+    rating_list = {}
+    for post_inst in related_things:
+        rating_list[post_inst.title] = [post_inst ,UserRating.objects.get(user_id=post_inst.user_id)]
+
+    context_dict['user_data'] = rating_list
     context_dict['session_slots'] = session_slots
     return render(request, 'profile.html', context_dict)
 
