@@ -167,3 +167,8 @@ def process_payment(request):
     form = PayPalPaymentsForm(initial=paypal_dict)
     return render(request, 'process_payment.html', {'form': form})
 
+
+def process_booking(request):
+    context_dict = {}
+
+    return render(request, 'book_session.html', context_dict)

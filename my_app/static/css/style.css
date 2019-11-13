@@ -6,3 +6,14 @@
   border: 1px solid #dc3545 !important;
   border-radius: 4px;
 }
+
+/* Slot booking */
+.booking-card-wrapper {
+
+}
+
+
+.booking-card {
+  /* width: 20%; */
+  margin: 100px;
+}
