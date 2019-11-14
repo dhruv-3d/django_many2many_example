@@ -27,14 +27,15 @@
                     <p class="card-text">Rate per 30min: $6</p>
                     <p class="card-text">Session Duration: 2 hours and 30 mins</p>
                     <p class="card-text">Total Amount: $30</p>
-                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-                    <!-- templates/home.html -->
-                    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                        data-key="{{ key }}"
-                        data-description="A Django Charge"
-                        data-amount="500"
-                        data-locale="auto">
-                    </script>
+                    <form action="{% url 'charge' %}" method="post">
+                        {% csrf_token %}
+                        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="{{ key }}"
+                            data-description="Tution Slot Booking"
+                            data-amount="3000"
+                            data-locale="auto">
+                        </script>
+                    </form>
                 </div>
             </div>
         </div>

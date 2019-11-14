@@ -1,3 +1,5 @@
+import stripe
+
 from datetime import datetime
 
 from django.conf import settings
@@ -7,6 +9,9 @@ from django.shortcuts import render, HttpResponse, reverse
 from paypal.standard.forms import PayPalPaymentsForm
 from .models import Post, Tag, User, Session, SessionSlot, UserRating
 from .forms import PostForm, SessionSlotForm
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def index(request):
@@ -139,6 +144,13 @@ def profile_detailed_view(request):
 
 @csrf_exempt
 def payment_done(request):
+    if request.method == 'POST':
+        charge = stripe.Charge.create(
+            amount=3000,
+            currency='inr',
+            description='A Django Charge',
+            source=request.POST['stripeToken']
+        )
     return render(request, 'payment_done.html')
  
  
@@ -170,5 +182,7 @@ def process_payment(request):
 
 def process_booking(request):
     context_dict = {}
+    
+    context_dict['key'] = settings.STRIPE_PUBLISHABLE_KEY
 
     return render(request, 'book_session.html', context_dict)

@@ -127,11 +127,5 @@ STATICFILES_DIRS = []
 MEDIA_URL = '/media/'
 
 
-# "demo.narolainfotech@gmail.com"
-# "DEMO@narola30"
-# facilitator = 'demo.narolainfotech-buyer@gmail.com'
-# buyer = 'demo.narolainfotech-facilitator@gmail.com'
-
-PAYPAL_RECEIVER_EMAIL = 'demo.narolainfotech-buyer@gmail.com'
-
-PAYPAL_TEST = True
+STRIPE_SECRET_KEY = 'sk_test_LxhW1EuTEOTlpS3ZQYE4EeSQ00ynsEya82'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_lTNGEjqzNBIlVlb43bYB1jEF00p4gWyDxK'
