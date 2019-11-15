@@ -67,15 +67,42 @@ def datepicker_poc(request):
     return render(request, 'datepicker_poc.html', context_dict)
 
 
-def calender_poc(request, session_id):
+def calender_poc(request):
     context_dict = {}
-    # sess_instance = Session.objects.get(id=session_id)
-    # if sess_instance:
-    sess_slots = SessionSlot.objects.filter(session_id=session_id)
 
+    session_slots = [
+        {
+            'id': 1,
+            'title': 'Session 1',
+            'start_time': datetime.strptime('2019-11-14 8:00:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-11-14 11:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+        {
+            'id': 2,
+            'title': 'Session 2',
+            'start_time': datetime.strptime('2019-11-15 16:30:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-11-15 18:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+                {
+            'id': 3,
+            'title': 'Session 3',
+            'start_time': datetime.strptime('2019-11-16 12:30:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-11-16 13:30:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+                {
+            'id': 4,
+            'title': 'Session 4',
+            'start_time': datetime.strptime('2019-11-17 11:00:00', '%Y-%m-%d %H:%M:%S'),
+            'end_time': datetime.strptime('2019-11-17 12:00:00', '%Y-%m-%d %H:%M:%S'),
+            'session_id': 14
+        },
+    ]
 
-    context_dict['session_slots'] = sess_slots
-    return render(request, 'calender_poc_new.html', context_dict)
+    context_dict['session_slots'] = session_slots
+    return render(request, 'calender_poc.html', context_dict)
 
 
 def event_schedule(request):

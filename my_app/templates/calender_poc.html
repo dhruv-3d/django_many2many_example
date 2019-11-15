@@ -5,184 +5,135 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/event_calender.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/core/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.css" />
 </head>
 
 <body>
-    <header>
-        Schedule your session
-    </header>
-    <section class="container">
-        <div class="headerBar">
-            <div class="left btn" onclick="prev()">
-                &#10094;
-            </div>
-            <div class="currentWeek"></div>
-            <div class="right btn" onclick="next()">
-                &#10095;
-            </div>
-        </div>
-        <div class="calenderContainer">
 
-        </div>
-    </section>
+    <div id='calendar-container'>
+        <div id='calendar'></div>
+    </div>
 
-    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment-recur/1.0.7/moment-recur.min.js'></script>
     <script>
-        var eventCalendar = (function () {
-            var _evCal = {};
+        document.addEventListener('DOMContentLoaded', function () {
 
-            function MyEvent(title, startDay, startTime) {
-                return {
-                    title: title,
-                    startDay: startDay,
-                    startTime: startTime,
-                    duration: 1
-                };
-            }
-            var currStartDate, currEndDate;
-            var oneDayMillis = 24 * 60 * 60 * 1000;
-            var eventMap = {};
-            var dayArr = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-            var timeArr = ["12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM"];
-            // "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"
-            var monthArr = ["Jan", 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-
-            _evCal.intializeCalender = function (dt) {
-                if (!dt) {
-                    dt = new Date();
-                }
-                var dayOfWeek = dt.getDay();
-
-                var startDate = new Date(dt.getTime() - oneDayMillis * dayOfWeek);
-                var endDate = new Date(startDate.getTime() + oneDayMillis * 6);
-                var currentWeekStr = getDateMonthString(startDate) + ' -  ' + getDateMonthString(endDate);
-                document.querySelector(".currentWeek").innerHTML = currentWeekStr;
-                var iter;
-                var calContainer = document.querySelectorAll('.calenderContainer')[0],
-                    currDate, row, cell;
-                calContainer.innerHTML = "";
-                row = document.createElement("div");
-                row.className = "row";
-                cell = document.createElement("div");
-                cell.className = "col col-time row-heading";
-                row.appendChild(cell);
-                for (iter = 0; iter < 7; iter++) {
-                    row.appendChild(createHeading(new Date(startDate.getTime() + oneDayMillis * iter)));
-                }
-                calContainer.appendChild(row);
-                for (iter = 0; iter < 12; iter++) {
-                    calContainer.appendChild(createRow(iter, startDate));
-                }
-                currStartDate = startDate;
-                currEndDate = endDate;
-            }
-
-            function createRow(iter1, startDate) {
-                var row = document.createElement("div"),
-                    iter;
-                row.className = "row";
-                row.appendChild(createTimeCell(iter1));
-                for (iter = 0; iter < 7; iter++) {
-                    row.appendChild(createCell(iter1, iter, new Date(startDate.getTime() + oneDayMillis * iter)));
-                }
-                return row;
-            }
-
-            function createTimeCell(iter1) {
-                var cell = document.createElement("div");
-                cell.className = "col col-time";
-                cell.innerHTML = timeArr[iter1];
-                return cell;
-            }
-
-            function createCell(iter1, iter, dt) {
-                var cell = document.createElement("div"),
-                    eventClass;
-                var idstr = getDateString(dt) + "-" + iter1;
-                if (eventMap.hasOwnProperty(idstr)) {
-                    eventClass = 'event';
-                    cell.innerText = eventMap[idstr].title;
-                } else {
-                    eventClass = '';
-                }
-                cell.className = "col col-day cell " + eventClass;
-                cell.setAttribute("id", idstr);
-                return cell;
-            }
-
-            function createHeading(dt) {
-                var cell = document.createElement("div");
-                cell.className = "col col-day row-heading";
-                var sp = document.createElement("span");
-                sp.className = "day";
-                sp.innerText = dayArr[dt.getDay()];
-                cell.appendChild(sp);
-                sp = document.createElement("span");
-                sp.className = "date";
-                sp.innerText = getDateMonthString(dt);
-                cell.appendChild(sp);
-                return cell;
-            }
-
-            function getDateString(dt) {
-                var date = dt.getDate();
-                var month = dt.getMonth() + 1;
-                var yr = dt.getFullYear();
-                return "" + date + month + yr;
-            }
-
-            function prev() {
-                intializeCalender(new Date(currStartDate.getTime() - oneDayMillis));
-            }
-
-            function next() {
-                intializeCalender(new Date(currEndDate.getTime() + oneDayMillis));
-            }
-
-            function getDateMonthString(dt) {
-                var date = dt.getDate();
-                var month = monthArr[dt.getMonth()];
-                return date + ' ' + month;
-            }
-
-            function calenderClickListener(ev) {
-                var targetElem = ev.target;
-                var targetClass = targetElem.className,
-                    id = targetElem.id,
-                    arr, evnt,
-                    dt, hr, title;
-                arr = id ? id.split('-') : [];
-                dt = arr[0];
-                hr = arr[1];
-                if (targetClass.indexOf('cell') === -1) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
-                    return;
-                } else if (targetClass.indexOf('event') != -1) {
-                    delete eventMap[id];
-                    targetElem.className = targetClass.replace('event', '');
-                    targetElem.innerText = '';
-                } else {
-                    title = prompt("Enter the title of Event", "Sample Event");
-                    if (title) {
-                        evnt = new MyEvent(title, dt, hr);
-                        eventMap[id] = evnt;
-                        targetElem.className = targetClass + ' event';
-                        targetElem.innerText = title;
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');
+            // initialize the calendar
+            // -----------------------------------------------------------------
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid ', 'timeGrid'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                minTime: "7:00:00",
+                maxTime: "24:00:00",
+                defaultView:  'timeGridWeek',
+                views: {
+                    month: {
+                        editable: false
                     }
+                },
+                // allDaySlot: false,
+                editable:  true,
+                selectable: true,
+                // eventOverlap: false,
+                events: setSlotList(),
+                eventColor: '#4390eb',
+                eventAllow: function (dropLocation, draggedEvent ) {
+                    console.log("dropLocation", dropLocation, draggedEvent);
+                    return true;
+                },
+                select: function(eventObject) {
+                    console.log("eventObject: ", eventObject);
+                    alert(["Session slot date: " + eventObject.start.toLocaleDateString(),
+                            "Session starts at: " + eventObject.start.toLocaleTimeString(),
+                            "Session end at: " + eventObject.end.toLocaleTimeString()].join("\n"));
+                    // console.log("Day is: ", eventObject.start.getDay())
+                    var did = Math.floor((Math.random() * 100) + 1)
+                    calendar.addEvent({
+                        id: did,
+                        title: 'Event ' + did.toString(),
+                        startTime: eventObject.start.toTimeString(),
+                        endTime: eventObject.end.toTimeString(),
+                        daysOfWeek: [eventObject.start.getDay()],
+                        startRecur: eventObject.start,
+                        endRecur: eventObject.end,
+                        allDay: false,
+                    });
+                },
+                eventDrop: function (info) {
+                    console.log("event to be update", info.event);
+                    alert(info.event.title + " was dropped on " + info.event.start);
+                    if (confirm("Are you sure about this change?")) {
+                        console.log("Yes")
+                    } else {
+                        info.revert();
+                    }
+                },
+
+                eventRender: function(eventObj) { 
+                    var event_element = $(eventObj.el);
+                    console.log("Event_Element:", eventObj);
+                    if (!eventObj.el.classList.contains('fc-bgevent')) {
+                        event_element.find(".fc-bg").css("pointer-events","none");
+                        event_element.append("<div style='position:absolute;bottom:0px;right:0px' ><button type='button' id='btnDeleteEvent' class='btn btn-block btn-primary btn-flat'>X</button></div>" );
+                        event_element.find("#btnDeleteEvent").click(function() {
+                            if (confirm("Are you sure about this change?")) {
+                                eventObj.event.remove()
+                            }
+                            else {
+                                console.log("No");
+                            }
+                        });
+                    }
+                },
+
+                eventClick: function(calEvent, jsEvent, view) {
+                    alert('Event: ' + calEvent.event.title);
+                    alert('Coordinates: ' + calEvent.jsEvent.pageX + ',' + calEvent.jsEvent.pageY);
+                    alert('View: ' + calEvent.view.title);
+                    // change the border color just for fun
+                    $(this).css('border-color', 'red');
                 }
+            });
+            calendar.render();
+
+            function setSlotList() {
+                events = []
+                {% for slot in session_slots %}
+                    events.push({
+                        id: {{ slot.id }},
+                        title: "{{ slot.session.title }}",
+                        start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                        end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.end_time|time:'H:i' }}",
+                        sessionId: {{ slot.session_id }},
+                        rendering: 'background',
+                        backgroundColor: '#00e107',
+                        editable: false,
+
+                        // daysOfWeek: [2],
+                        // startRecur: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
+                        // allDay: false,
+                    });
+                {% endfor %}
+                console.log("Session Slots: ", events);
+                return events
             }
-
-            document.querySelector('.calenderContainer').addEventListener('click', calenderClickListener);
-            return _evCal;
-        })();
-
-        eventCalendar.intializeCalender();
+    });
     </script>
-
-
 </body>
 
 </html>
