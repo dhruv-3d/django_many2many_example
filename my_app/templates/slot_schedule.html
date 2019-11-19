@@ -1,5 +1,6 @@
 <!doctype html>
 {% load staticfiles %}
+{% load tz %}
 <html lang="en">
 
 <head>
@@ -12,12 +13,16 @@
 </head>
 
 <body>
+    <div class="timezone-testing">
 
+    </div>
     <div id='calendar-container'>
         <div id='calendar'></div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/moment-timezone.min.js' %}"></script>
+    <!-- <script src="{% static 'js/moment-timezone-with-data-10-year-range.min.js' %}"></script> -->
     <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
     <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
     <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
@@ -28,9 +33,12 @@
             var Calendar = FullCalendar.Calendar;
             var calendarEl = document.getElementById('calendar');
             // initialize the calendar
+            
             // -----------------------------------------------------------------
             var calendar = new Calendar(calendarEl, {
                 plugins: ['interaction', 'dayGrid ', 'timeGrid'],
+                // titleFormat: 'MMMM D, YYYY',
+                // timeZone: 'UTC',
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -56,21 +64,27 @@
                 },
                 select: function(eventObject) {
                     console.log("eventObject: ", eventObject);
-                    alert(["Session slot date: " + eventObject.start.toLocaleDateString(),
-                            "Session starts at: " + eventObject.start.toLocaleTimeString(),
-                            "Session end at: " + eventObject.end.toLocaleTimeString()].join("\n"));
-                    // console.log("Day is: ", eventObject.start.getDay())
-                    var did = Math.floor((Math.random() * 100) + 1)
-                    calendar.addEvent({
-                        id: did,
-                        title: 'Event ' + did.toString(),
-                        startTime: eventObject.start.toTimeString(),
-                        endTime: eventObject.end.toTimeString(),
-                        daysOfWeek: [eventObject.start.getDay()],
-                        startRecur: eventObject.start,
-                        endRecur: eventObject.end,
-                        allDay: false,
-                    });
+                    // var check = calendar.formatDate(eventObject.start,'yyyy-MM-dd');
+                    // var today = calender.formatDate(new Date(),'yyyy-MM-dd');
+                    var check = eventObject.start;
+                    var today = new Date();
+                    // today = today.getUTCSeconds();
+                    console.log("check:", eventObject.start, "today: ", today)
+                    if(check <= today) {
+                        alert("Cannot select");
+                    } else {
+                        var did = Math.floor((Math.random() * 100) + 1)
+                        calendar.addEvent({
+                            id: did,
+                            title: 'Event ' + did.toString(),
+                            startTime: eventObject.start.toTimeString(),
+                            endTime: eventObject.end.toTimeString(),
+                            daysOfWeek: [eventObject.start.getDay()],
+                            startRecur: eventObject.start,
+                            endRecur: eventObject.end,
+                            allDay: false,
+                        });
+                    }
                 },
                 eventDrop: function (info) {
                     console.log("event to be update", info.event);
@@ -129,7 +143,7 @@
                 {% for slot in session_slots %}
                     events.push({
                         id: {{ slot.id }},
-                        title: "{{ slot.session.title }}",
+                        // title: "{{ slot.session.title }}",
                         start: "{{ slot.start_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
                         end: "{{ slot.end_time|date:'Y-m-d' }}T{{ slot.start_time|time:'H:i' }}",
                         sessionId: {{ slot.session_id }},
