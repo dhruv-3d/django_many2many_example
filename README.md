@@ -22,6 +22,8 @@ https://codepen.io/pen/?&editable=true&editors=001
 
 http://jsfiddle.net/5o66w860/65/
 
+>>> https://stackoverflow.com/questions/29158308/timezone-not-working-properly-for-fullcalendar
+
 
 DateTime Widget:
 https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
