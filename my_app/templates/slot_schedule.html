@@ -73,17 +73,7 @@
                     if(check <= today) {
                         alert("Cannot select");
                     } else {
-                        var did = Math.floor((Math.random() * 100) + 1)
-                        calendar.addEvent({
-                            id: did,
-                            title: 'Event ' + did.toString(),
-                            startTime: eventObject.start.toTimeString(),
-                            endTime: eventObject.end.toTimeString(),
-                            daysOfWeek: [eventObject.start.getDay()],
-                            startRecur: eventObject.start,
-                            endRecur: eventObject.end,
-                            allDay: false,
-                        });
+                        renderNewEvent(eventObject)
                     }
                 },
                 eventDrop: function (info) {
@@ -91,24 +81,24 @@
                     alert(info.event.title + " was dropped on " + info.event.start);
                     if (confirm("Are you sure about this change?")) {
                         // API call to update existing slots
-                        // $.ajax({
-                        //     type: 'POST',
-                        //     url: "{% url 'event_schedule' %}",
-                        //     data: {
-                        //         'created': false, 
-                        //         'start_time': info.event.start,
-                        //         'end_time': info.event.end,
-                        //         'sesion_id': info.event.extendedProps.sessionId,
-                        //         'slot_id': info.event.id,
-                        //         'csrfmiddlewaretoken': '{{ csrf_token }}'
-                        //     },
-                        //     success: function (data, textStatus) {
-                        //         alert("Event slot updated successfully!!");
-                        //     },
-                        //     error: function (xhr, status, e) {
-                        //         alert(status, e);
-                        //     }
-                        // });
+                        $.ajax({
+                            type: 'POST',
+                            url: "{% url 'event_schedule' %}",
+                            data: {
+                                'created': false, 
+                                'start_time': info.event.start,
+                                'end_time': info.event.end,
+                                'sesion_id': info.event.extendedProps.sessionId,
+                                'slot_id': info.event.id,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            success: function (data, textStatus) {
+                                alert("Event slot updated successfully!!");
+                            },
+                            error: function (xhr, status, e) {
+                                alert(status, e);
+                            }
+                        });
                     } else {
                         info.revert();
                     }
@@ -137,6 +127,37 @@
                 }
             });
             calendar.render();
+
+            function renderNewEvent(eventObj) {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'event_schedule' %}",
+                    data: {
+                        'created': true, 
+                        'start_time': eventObj.start,
+                        'end_time': eventObj.end,
+                        'sesion_id': {{ session_slots.0.session_id }},
+                        'slot_id': eventObj.id,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data, textStatus) {
+                        var did = Math.floor((Math.random() * 100) + 1)
+                        calendar.addEvent({
+                            id: did,
+                            title: 'Event ' + did.toString(),
+                            startTime: eventObject.start.toTimeString(),
+                            endTime: eventObject.end.toTimeString(),
+                            daysOfWeek: [eventObject.start.getDay()],
+                            startRecur: eventObject.start,
+                            endRecur: eventObject.end,
+                            allDay: false,
+                        });
+                    },
+                    error: function (xhr, status, e) {
+                        alert(status, e);
+                    }
+                });
+            }
 
             function setSlotList() {
                 events = []

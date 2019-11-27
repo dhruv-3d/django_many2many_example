@@ -1,0 +1,160 @@
+<!doctype html>
+{% load staticfiles %}
+{% load tz %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/core/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.css" />
+</head>
+
+<body>
+    <div id='calendar-container'>
+        <div id='calendar'></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // var all_slots = [];
+            // fetchEventSlots().then(data => {
+            //     all_slots = data
+            //     console.log("all_slots: ", all_slots);
+            // })
+            
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid ', 'timeGrid'],
+                timeZone: 'UTC',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                defaultView: 'timeGridWeek',
+                views: {
+                    month: {
+                        editable: false
+                    }
+                },
+                // allDaySlot: false,
+                editable: true,
+                selectable: true,
+                eventOverlap: false,
+                events: setSlotList(),
+                eventColor: '#4390eb',
+                select: function (eventObject) {
+                    console.log("eventObject: ", calendar.getEvents());
+                    var check = eventObject.start;
+                    var today = new Date();
+                    console.log("today:", today);
+                    console.log("check:", check);
+                    if (check <= today) {
+                        alert("Cannot select");
+                    } else {
+                        renderNewEvent(eventObject)
+                    }
+                },
+                eventDrop: function (eventObj) { },
+                // add delete button and its event handler while rendering events
+                eventRender: function (eventObj) {
+                    var event_element = $(eventObj.el);
+                    event_element.find(".fc-bg").css("pointer-events", "none");
+                    event_element.append("<div style='position:absolute;bottom:0px;right:0px' ><button type='button' id='btnDeleteEvent' class='btn btn-block btn-primary btn-flat'>X</button></div>");
+                    event_element.find("#btnDeleteEvent").click(function () {
+                        if (confirm("Are you sure about this change?")) {
+                            eventObj.event.remove()
+                        }
+                        else {
+                            console.log("adasd");
+                        }
+                    });
+                },
+
+                eventClick: function (eventObj) { },
+            });
+
+            calendar.render();
+
+            // calendar.setOption('timeZone', 'UTC');
+            function renderNewEvent(eventObj) {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'create_new_event' %}",
+                    data: {
+                        'start_time': eventObj.start.toUTCString(),
+                        'end_time': eventObj.end.toUTCString(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        console.log("event data from server:", data.new_slot)
+                        // var did = Math.floor((Math.random() * 100) + 1)
+                        calendar.addEvent({
+                            id: data.id,
+                            title: 'Event ' + data.new_slot.id,
+                            start: data.new_slot.start_time.replace('Z', ''),
+                            end: data.new_slot.end_time.replace('Z', ''),
+                            allDay: false,
+                        });
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            }
+
+            async function fetchEventSlots() {
+                var eventList = []
+
+                await $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetch_events' %}",
+                    success: function (data) {
+                        // console.log("event data from server:", data.all_slots)
+                        data.all_slots.forEach(slot => {
+                            eventList.push({
+                                id: slot.id,
+                                title: 'Event ' + slot.id,
+                                start: slot.start_time.replace('Z', ''),
+                                end: slot.end_time.replace('Z', ''),
+                                allDay: false,
+                            })
+                        });
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+                console.log("eventList: ", eventList);
+                return eventList;
+            }
+        
+            function setSlotList() {
+                events = []
+                {% for slot in session_slots %}
+                    events.push({
+                        id: "{{ slot.id }}",
+                        title: "Event_{{ slot.id }}",
+                        start: "{{ slot.start_time }}",
+                        end: "{{ slot.end_time }}",
+                        allDay: false,
+                    });
+                {% endfor %}
+                console.log("Session Slots: ", events);
+                return events
+            }
+        });
+    </script>
+</body>
+
+</html>
+
+

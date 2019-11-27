@@ -1,13 +1,15 @@
+import pytz
 import stripe
-
 from datetime import datetime
 
 from django.conf import settings
+from django.http import JsonResponse
+from django.utils import dateparse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, HttpResponse, reverse
 
 from paypal.standard.forms import PayPalPaymentsForm
-from .models import Post, Tag, User, Session, SessionSlot, UserRating
+from .models import Post, Tag, User, Session, SessionSlot, UserRating, SessionSlotBooking
 from .forms import PostForm, SessionSlotForm
 
 
@@ -111,15 +113,15 @@ def event_schedule(request):
     sess_slots = SessionSlot.objects.all()
 
     if request.method == 'POST':
-        # if request.POST.get('created'):
-        start_time = request.POST.get('start_time')
-        end_time = request.POST.get('end_time')
-        sesion_id = request.POST.get('sesion_id')
-        slot_id = request.POST.get('slot_id')
-        print(f"{start_time}\n{end_time}\n{sesion_id}")
+        if request.POST.get('created'):
+            start_time = request.POST.get('start_time')
+            end_time = request.POST.get('end_time')
+            sesion_id = request.POST.get('sesion_id')
+            slot_id = request.POST.get('slot_id')
+            print(f"{start_time}\n{end_time}\n{sesion_id}")
 
     context_dict['session_slots'] = sess_slots
-    context_dict['session_list'] = all_session
+    # context_dict['session_list'] = all_session
     return render(request, 'slot_schedule.html', context_dict)
 
 
@@ -213,3 +215,67 @@ def process_booking(request):
     context_dict['key'] = settings.STRIPE_PUBLISHABLE_KEY
 
     return render(request, 'book_session.html', context_dict)
+
+
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+
+
+# to render calender
+def render_calender(request):
+    context_dict = {}
+
+    all_slots = SessionSlotBooking.objects.all()
+
+    slots_list = []
+    for slot in all_slots:
+        print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
+        slots_list.append({
+            'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+            'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+            'id': slot.id
+        })
+    context_dict['session_slots'] = slots_list
+
+    return render(request, 'schedule_test.html', context_dict)
+
+# to fetch all events
+def fetch_events(request):
+    context_dict = {}
+
+    all_slots = SessionSlotBooking.objects.all()
+
+    slots_list = []
+    for slot in all_slots:
+        # aware_start_time = pytz.utc.localize(slot.start_time)
+        # aware_end_time = pytz.utc.localize(slot.end_time)
+        slots_list.append({
+            'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+            'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+            'id': slot.id
+        })
+
+    return JsonResponse({'status':200, 'all_slots': slots_list})
+
+# to create new events
+def create_new_event(request):
+    if request.method == 'POST':
+        start_time = request.POST.get('start_time', None)
+        end_time = request.POST.get('end_time', None)
+
+        date_format = '%a, %d %b %Y %H:%M:%S %Z'
+        unaware_start_time = datetime.strptime(start_time, date_format)
+        aware_start_time = pytz.utc.localize(unaware_start_time)
+
+        unaware_end_time = datetime.strptime(end_time, date_format)
+        aware_end_time = pytz.utc.localize(unaware_end_time)
+
+        print(f"\n\n unaware: {unaware_start_time}\n type: {type(unaware_start_time)}\n")
+        print(f"\n\n aware: {aware_start_time}\n type: {type(aware_start_time)}\n")
+
+        new_slot = SessionSlotBooking.objects.create(start_time=aware_start_time, end_time=aware_end_time)
+    
+    return JsonResponse({'status':200, 'new_slot': {'start_time':new_slot.start_time, 'end_time':new_slot.end_time, 'id':new_slot.id}})
